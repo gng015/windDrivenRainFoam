@@ -64,7 +64,7 @@ forAll (Rh, i)
         // Create USER_DFh from DATABASE_DFh by summing discrete DFh until the average of 2 diameters. eg for 0.5mm -> sum DFh from 0 till D=0.75mm (the 0.7mm element)
         forAll (phases, m)
         {    
-            if (m < phase.size()-1)
+            if (m < phases.size()-1)
             {
                 scalar USER_DFh_SUM = 0;
                 for (label n = 0; n < 34; n++)
@@ -81,7 +81,7 @@ forAll (Rh, i)
                     // Due to sum being from 0 till M, we need to subtract the previous M-1 elements to get the interval
                     USER_DFh[i][m] = USER_DFh_SUM - USER_DFh[i][m-1];
                 }
-            } else if (m == phase.size()-1) {
+            } else if (m == phases.size()-1) {
                 // Since summation of all element is 1 and the second last sum is recorded under USER_DFh_SUM, we can just subtract this to get the final interval
                 USER_DFh[i][m] = 1 - USER_DFh_SUM;
             }
