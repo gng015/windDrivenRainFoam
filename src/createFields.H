@@ -49,7 +49,7 @@ List<scalar> phases
 
 #include "calculateFhD.H"
 
-Info<< "Reading field U\n" << endl;
+Info << nl << "Reading field U\n" << endl;
 volVectorField U
 (
     IOobject
@@ -64,6 +64,21 @@ volVectorField U
 );
 U = U*scalingFactor;
 U.correctBoundaryConditions();
+
+// Was phi field missing? Solver works after adding a reading phi field section
+Info << "Reading field phi\n" << endl;
+surfaceScalarField phi
+(
+	IOobject
+	(
+		"phi", 
+		runTime.timeName(), 
+		mesh,
+        IOobject::MUST_READ,
+        IOobject::NO_WRITE
+	),
+	mesh
+);
 
 volScalarField Re
 (
@@ -92,3 +107,5 @@ volScalarField CdRe
     mesh,
     dimensionedScalar("CdRe",dimensionSet(0,0,0,0,0,0,0),250)
 );
+
+

@@ -23,6 +23,7 @@ forAll(phases, phase_no)
         mesh
     )
     );
+	Info << nameU_i << " field created" << endl;
 
     word namephi_i ("phi" + name(phase_no+1));
     phirain.set
@@ -41,6 +42,7 @@ forAll(phases, phase_no)
         linearInterpolate(Urain[phase_no]) & mesh.Sf()
     )
     );
+    Info << namephi_i << " field created" << endl;
 
     word namealpha_i ("alpha" + name(phase_no+1));
     alpharain.set
@@ -59,4 +61,8 @@ forAll(phases, phase_no)
         mesh
     )
     );
+	Info << namealpha_i << " field created" << endl;
+    
 }
+
+
