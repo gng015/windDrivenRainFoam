@@ -74,7 +74,7 @@ forAll (Rh, i)
                 USER_DFh_SUM = 0;
                 for (label n = 0; n < 34; n++)
                 {    
-                    if ( DATABASE_DIAMETERS[n] < (USER_DIAMETERS[m]*1E3-USER_DIAMETERS[m-1])/2.0 )
+                    if ( DATABASE_DIAMETERS[n] < (USER_DIAMETERS[m] + USER_DIAMETERS[m-1])/2.0 )
                     {            
                         USER_DFh_SUM = USER_DFh_SUM + DATABASE_DFh[i][n];
                     }
