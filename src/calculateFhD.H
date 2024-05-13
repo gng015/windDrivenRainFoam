@@ -86,8 +86,12 @@ forAll (Rh, i)
                 // Since summation of all element is 1 and the second last sum is recorded under USER_DFh_SUM, we can just subtract this to get the final interval
                 USER_DFh[i][m] = 1 - USER_DFh_SUM;
             }
+            Info << nl << "Rh = " << Rh_ << nl;
+            Info << nl << "D = " << USER_DIAMETERS[m] << " | fhd = " << USER_DFh[i][m] << nl;
+            
         }
     }
     DFh[i] = USER_DFh[i];
+    
 }
 ///////////////////////////////////////////
