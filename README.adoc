@@ -3,8 +3,7 @@
 Fork of WindDriveRainFoam
 (http://www.carmeliet.ethz.ch/research/downloads/winddrivenrainfoam.html) to:
 
-- Get rid of suffix.
-- Adapt for OpenFOAM(R) 5.x API.
+- copied v2106
 
 == Compilation
 
