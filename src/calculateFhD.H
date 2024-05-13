@@ -32,6 +32,7 @@ forAll (phases, i)
 
 List<List<scalar>> DATABASE_DFh(Rh.size());
 List<List<scalar>> USER_DFh(Rh.size());
+List<List<scalar>> DFh(Rh.size());
 
 forAll (Rh, i)
 {    
@@ -87,5 +88,6 @@ forAll (Rh, i)
             }
         }
     }
+    DFh[i] = USER_DFh[i]
 }
 ///////////////////////////////////////////
