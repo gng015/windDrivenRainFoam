@@ -79,6 +79,8 @@ int main(int argc, char *argv[])
                 #include "alphaEqns.H"
                 
                 dimensionedScalar dp ("dp", dimensionSet(0,1,0,0,0,0,0), phases[phase_no]);         
+                // rescale dp to metres to use in CdRe and tp
+                dp = dp * 0.001;
                             
                 volScalarField magUr = mag(U - Urain[phase_no]);
                 
