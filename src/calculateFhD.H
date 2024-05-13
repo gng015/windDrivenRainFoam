@@ -30,6 +30,9 @@ forAll (phases, i)
     }
 }
 
+List<scalar> Vt(phases.size());
+Vt = USER_Vt;
+
 List<List<scalar>> DATABASE_DFh(Rh.size());
 List<List<scalar>> USER_DFh(Rh.size());
 List<List<scalar>> DFh(Rh.size());
@@ -63,11 +66,12 @@ forAll (Rh, i)
         DATABASE_DFh[i] = (DATABASE_DF*DATABASE_Vt)/DATABASE_DFh_SUM;
 
         // Create USER_DFh from DATABASE_DFh by summing discrete DFh until the average of 2 diameters. eg for 0.5mm -> sum DFh from 0 till D=0.75mm (the 0.7mm element)
+        scalar USER_DFh_SUM = 0;
         forAll (phases, m)
         {    
             if (m < phases.size()-1)
             {
-                scalar USER_DFh_SUM = 0;
+                USER_DFh_SUM = 0;
                 for (label n = 0; n < 34; n++)
                 {    
                     if ( DATABASE_DIAMETERS[n] < (USER_DIAMETERS[m]*1E3-USER_DIAMETERS[m-1])/2.0 );
