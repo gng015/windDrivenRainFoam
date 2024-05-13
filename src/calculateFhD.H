@@ -91,6 +91,8 @@ forAll (Rh, i)
             
         }
     }
+
+    // Write USER_DFh to DFh because DFh is used in calculateCatchRatio.H and I don't want to rename it
     DFh[i] = USER_DFh[i];
     
 }
