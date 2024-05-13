@@ -54,7 +54,7 @@ forAll (Rh, i)
             }
             else if (j == phases.size()-1)
             {
-                DATABASE_DF[j] = 1 - best( (DATABASE_DIAMETERS[j] - (DATABASE_DIAMETERS[j]*1E3-DATABASE_DIAMETERS[j-1])/2.0) , Rh_);
+                DATABASE_DF[j] = 1 - best( (DATABASE_DIAMETERS[j] - (DATABASE_DIAMETERS[j]-DATABASE_DIAMETERS[j-1])/2.0) , Rh_);
             }
             else
             {
@@ -74,7 +74,7 @@ forAll (Rh, i)
                 USER_DFh_SUM = 0;
                 for (label n = 0; n < 34; n++)
                 {    
-                    if ( DATABASE_DIAMETERS[n] < (USER_DIAMETERS[m]*1E3-USER_DIAMETERS[m-1])/2.0 );
+                    if ( DATABASE_DIAMETERS[n] < (USER_DIAMETERS[m]*1E3-USER_DIAMETERS[m-1])/2.0 )
                     {            
                         USER_DFh_SUM = USER_DFh_SUM + DATABASE_DFh[i][n];
                     }
