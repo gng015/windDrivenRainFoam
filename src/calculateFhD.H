@@ -87,7 +87,7 @@ forAll (Rh, i)
                 USER_DFh[i][m] = 1 - USER_DFh_SUM;
             }
             Info << nl << "Rh = " << Rh_ << nl;
-            Info << nl << "D = " << USER_DIAMETERS[m] << " | fhd = " << USER_DFh[i][m] << nl;
+            Info << "D = " << USER_DIAMETERS[m] << " | fhd = " << USER_DFh[i][m] << nl;
             
         }
     }
