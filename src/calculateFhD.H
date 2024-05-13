@@ -17,7 +17,6 @@ forAll (phases, i)
 
 int Vt_index = 0;
 
-// This step is probably made redundant
 forAll (phases, i)
 {    
     for (label j = 0; j < 34; j++)
@@ -62,42 +61,48 @@ forAll (Rh, i)
             }
             DATABASE_DFh_SUM = DATABASE_DFh_SUM + (DATABASE_DF[j]*DATABASE_Vt[j]);
         }
-        
-        DATABASE_DFh[i] = (DATABASE_DF*DATABASE_Vt)/DATABASE_DFh_SUM;
 
+        DATABASE_DFh[i] = (DATABASE_DF*DATABASE_Vt)/DATABASE_DFh_SUM;
+		
         // Create USER_DFh from DATABASE_DFh by summing discrete DFh until the average of 2 diameters. eg for 0.5mm -> sum DFh from 0 till D=0.75mm (the 0.7mm element)
         scalar USER_DFh_SUM = 0;
-        forAll (phases, m)
-        {    
+        // Use a temp array
+        List<scalar> temp_USER_DFh(phases.size());
+        for (label m = 0; m < phases.size(); m++)
+        {   
             if (m < phases.size()-1)
             {
                 USER_DFh_SUM = 0;
                 for (label n = 0; n < 34; n++)
                 {    
-                    if ( DATABASE_DIAMETERS[n] < (USER_DIAMETERS[m] + USER_DIAMETERS[m-1])/2.0 )
+                    if ( DATABASE_DIAMETERS[n] < (USER_DIAMETERS[m]+USER_DIAMETERS[m+1])/2.0 )
                     {            
                         USER_DFh_SUM = USER_DFh_SUM + DATABASE_DFh[i][n];
                     }
                 }
                 if (m == 0)
                 {
-                    USER_DFh[i][m] = USER_DFh_SUM;
+                    temp_USER_DFh[m] = USER_DFh_SUM;
                 } else {
                     // Due to sum being from 0 till M, we need to subtract the previous M-1 elements to get the interval
-                    USER_DFh[i][m] = USER_DFh_SUM - USER_DFh[i][m-1];
+                    temp_USER_DFh[m] = USER_DFh_SUM - temp_USER_DFh[m-1];
                 }
+                
             } else if (m == phases.size()-1) {
                 // Since summation of all element is 1 and the second last sum is recorded under USER_DFh_SUM, we can just subtract this to get the final interval
-                USER_DFh[i][m] = 1 - USER_DFh_SUM;
+                temp_USER_DFh[m] = 1 - USER_DFh_SUM;
             }
             Info << nl << "Rh = " << Rh_ << nl;
-            Info << "D = " << USER_DIAMETERS[m] << " | fhd = " << USER_DFh[i][m] << nl;
+            Info << "D = " << USER_DIAMETERS[m] << " | fhd = " << temp_USER_DFh[m] << nl;
             
         }
+        // set the tempo DFh to USER array
+        USER_DFh[i] = (temp_USER_DFh);
+	    // Write USER_DFh to DFh because DFh is used in calculateCatchRatio.H and I don't want to rename it
+        DFh[i] = USER_DFh[i];
     }
 
-    // Write USER_DFh to DFh because DFh is used in calculateCatchRatio.H and I don't want to rename it
-    DFh[i] = USER_DFh[i];
+
     
 }
 ///////////////////////////////////////////
