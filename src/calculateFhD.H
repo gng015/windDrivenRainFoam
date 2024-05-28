@@ -10,102 +10,106 @@ DATABASE_Vt = {0, 1.17, 1.62, 2.06, 2.47, 2.87, 3.27, 3.67, 4.03, 4.64, 5.17, 5.
 List<scalar> USER_Vt(phases.size());
 List<scalar> USER_DIAMETERS(phases.size());
 
-forAll (phases, i)
+// if fhd isnt in transport properties then calculate it
+if (fhd.size()==0)
 {
-    USER_DIAMETERS[i] = phases[i];
-}
 
-int Vt_index = 0;
+    int Vt_index = 0;
 
-forAll (phases, i)
-{    
-    for (label j = 0; j < 34; j++)
-    {    
-        if ( std::abs(DATABASE_DIAMETERS[j]-USER_DIAMETERS[i]) < scalar(1E-4) )
-        {            
-            USER_Vt[Vt_index] = DATABASE_Vt[j];
-            Vt_index = Vt_index + 1;
-        }
-    }
-}
-
-List<scalar> Vt(phases.size());
-Vt = USER_Vt;
-
-List<List<scalar>> DATABASE_DFh(Rh.size());
-List<List<scalar>> USER_DFh(Rh.size());
-List<List<scalar>> DFh(Rh.size());
-
-forAll (Rh, i)
-{   
-    scalar Rh_ = Rh[i];
-    List<scalar> DATABASE_DF(DATABASE_DIAMETERS.size());
-    scalar DATABASE_DFh_SUM = 0; 
-    
-	Info << "Rh: " << Rh_ << " mm/hr" << nl;
-    if (Rh_ > 0)
+    forAll (phases, i)
     {
-    	
-        // Create DATABASE_DFh, start from j=1 because j=0 is D=0
-        for (label j = 1; j < 34; j++)
+        for (label j = 0; j < 34; j++)
         {
-            if (j==1)
+            if ( std::abs(DATABASE_DIAMETERS[j]-USER_DIAMETERS[i]) < scalar(1E-4) )
             {
-                DATABASE_DF[j] = best( (DATABASE_DIAMETERS[j] + (DATABASE_DIAMETERS[j+1]-DATABASE_DIAMETERS[j])/2.0) , Rh_) - 0.0;
+                USER_Vt[Vt_index] = DATABASE_Vt[j];
+                Vt_index = Vt_index + 1;
             }
-            else if (j == 33)
-            {
-                DATABASE_DF[j] = 1 - best( (DATABASE_DIAMETERS[j] - (DATABASE_DIAMETERS[j]-DATABASE_DIAMETERS[j-1])/2.0) , Rh_);
-            }
-            else
-            {
-                DATABASE_DF[j] = best( (DATABASE_DIAMETERS[j] + (DATABASE_DIAMETERS[j+1]-DATABASE_DIAMETERS[j])/2.0) , Rh_) - best( (DATABASE_DIAMETERS[j] - (DATABASE_DIAMETERS[j]-DATABASE_DIAMETERS[j-1])/2.0) , Rh_);
-            }
-            DATABASE_DFh_SUM = DATABASE_DFh_SUM + (DATABASE_DF[j]*DATABASE_Vt[j]);
         }
-
-        DATABASE_DFh[i] = (DATABASE_DF*DATABASE_Vt)/DATABASE_DFh_SUM;
-		
-        // Create USER_DFh from DATABASE_DFh by summing discrete DFh until the average of 2 diameters. eg for 0.5mm -> sum DFh from 0 till D=0.75mm (the 0.7mm element)
-        scalar USER_DFh_SUM = 0;
-        scalar PREV_DFh_SUM = 0;
-        // Use a temp array
-        List<scalar> temp_USER_DFh(phases.size());
-        for (label m = 0; m < phases.size(); m++)
-        {   
-            if (m < phases.size()-1)
-            {
-            	USER_DFh_SUM = 0;
-                for (label n = 0; n < 34; n++)
-                {   
-                    if ( DATABASE_DIAMETERS[n] < (USER_DIAMETERS[m]+USER_DIAMETERS[m+1])/2.0 )
-                    {            
-                        USER_DFh_SUM = USER_DFh_SUM + DATABASE_DFh[i][n];
-                    }
-                }
-                if (m == 0)
-                {
-                    temp_USER_DFh[m] = USER_DFh_SUM;
-                } else {
-                    // Due to sum being from 0 till M, we need to subtract the previous M-1 elements to get the interval
-                    temp_USER_DFh[m] = USER_DFh_SUM - PREV_DFh_SUM;
-                }
-                
-            } else if (m == phases.size()-1) {
-                // Since summation of all element is 1 and the second last sum is recorded under USER_DFh_SUM, we can just subtract this to get the final interval
-                temp_USER_DFh[m] = 1 - PREV_DFh_SUM;
-            }
-            PREV_DFh_SUM = USER_DFh_SUM;
-            Info << "D = " << USER_DIAMETERS[m] << " mm | fhd = " << temp_USER_DFh[m] << nl;
-            
-        }
-        // set the tempo DFh to USER array
-        USER_DFh[i] = (temp_USER_DFh);
-	    // Write USER_DFh to DFh because DFh is used in calculateCatchRatio.H and I don't want to rename it
-        DFh[i] = USER_DFh[i];
     }
 
+    List<scalar> Vt(phases.size());
+    Vt = USER_Vt;
 
-    
+    List<List<scalar>> DATABASE_DFh(Rh.size());
+    List<List<scalar>> USER_DFh(Rh.size());
+    List<List<scalar>> DFh(Rh.size());
+
+    forAll (Rh, i)
+    {
+        scalar Rh_ = Rh[i];
+        List<scalar> DATABASE_DF(DATABASE_DIAMETERS.size());
+        scalar DATABASE_DFh_SUM = 0;
+
+        Info << "Rh: " << Rh_ << " mm/hr" << nl;
+        if (Rh_ > 0)
+        {
+
+            // Create DATABASE_DFh, start from j=1 because j=0 is D=0
+            for (label j = 1; j < 34; j++)
+            {
+                if (j==1)
+                {
+                    DATABASE_DF[j] = best( (DATABASE_DIAMETERS[j] + (DATABASE_DIAMETERS[j+1]-DATABASE_DIAMETERS[j])/2.0) , Rh_) - 0.0;
+                }
+                else if (j == 33)
+                {
+                    DATABASE_DF[j] = 1 - best( (DATABASE_DIAMETERS[j] - (DATABASE_DIAMETERS[j]-DATABASE_DIAMETERS[j-1])/2.0) , Rh_);
+                }
+                else
+                {
+                    DATABASE_DF[j] = best( (DATABASE_DIAMETERS[j] + (DATABASE_DIAMETERS[j+1]-DATABASE_DIAMETERS[j])/2.0) , Rh_) - best( (DATABASE_DIAMETERS[j] - (DATABASE_DIAMETERS[j]-DATABASE_DIAMETERS[j-1])/2.0) , Rh_);
+                }
+                DATABASE_DFh_SUM = DATABASE_DFh_SUM + (DATABASE_DF[j]*DATABASE_Vt[j]);
+            }
+
+            DATABASE_DFh[i] = (DATABASE_DF*DATABASE_Vt)/DATABASE_DFh_SUM;
+
+            // Create USER_DFh from DATABASE_DFh by summing discrete DFh until the average of 2 diameters. eg for 0.5mm -> sum DFh from 0 till D=0.75mm (the 0.7mm element)
+            scalar USER_DFh_SUM = 0;
+            scalar PREV_DFh_SUM = 0;
+            // Use a temp array
+            List<scalar> temp_USER_DFh(phases.size());
+            for (label m = 0; m < phases.size(); m++)
+            {
+                if (m < phases.size()-1)
+                {
+                    USER_DFh_SUM = 0;
+                    for (label n = 0; n < 34; n++)
+                    {
+                        if ( DATABASE_DIAMETERS[n] < (USER_DIAMETERS[m]+USER_DIAMETERS[m+1])/2.0 )
+                        {
+                            USER_DFh_SUM = USER_DFh_SUM + DATABASE_DFh[i][n];
+                        }
+                    }
+                    if (m == 0)
+                    {
+                        temp_USER_DFh[m] = USER_DFh_SUM;
+                    } else {
+                        // Due to sum being from 0 till M, we need to subtract the previous M-1 elements to get the interval
+                        temp_USER_DFh[m] = USER_DFh_SUM - PREV_DFh_SUM;
+                    }
+
+                } else if (m == phases.size()-1) {
+                    // Since summation of all element is 1 and the second last sum is recorded under USER_DFh_SUM, we can just subtract this to get the final interval
+                    temp_USER_DFh[m] = 1 - PREV_DFh_SUM;
+                }
+                PREV_DFh_SUM = USER_DFh_SUM;
+                Info << "D = " << USER_DIAMETERS[m] << " mm | fhd = " << temp_USER_DFh[m] << nl;
+
+            }
+            // set the tempo DFh to USER array
+            USER_DFh[i] = (temp_USER_DFh);
+            // Write USER_DFh to DFh because DFh is used in calculateCatchRatio.H and I don't want to rename it
+            DFh[i] = USER_DFh[i];
+        }
+
+    }
+
+} else {
+
+    List<List<scalar>> DFh(Rh.size());
+    DFh[0] = fhd;
+
 }
 ///////////////////////////////////////////

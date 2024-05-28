@@ -1,3 +1,5 @@
+#include "createRDeltaT.H"
+
 Info<< "Reading transportProperties\n" << endl;
 
 IOdictionary transportProperties
@@ -47,7 +49,16 @@ List<scalar> phases
     transportProperties.lookup("phases")
 );
 
+// Allow manual fhd input but only for single Rh input
+List<scalar> fhd
+(
+    transportProperties.lookup("fhd")
+);
+
+
 #include "calculateFhD.H"
+
+
 
 Info << nl << "Reading field U\n" << endl;
 volVectorField U
@@ -109,3 +120,4 @@ volScalarField CdRe
 );
 
 
+#include "createFvOptions.H"

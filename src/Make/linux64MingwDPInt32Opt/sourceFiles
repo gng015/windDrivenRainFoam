@@ -1,0 +1,4 @@
+SOURCE = \
+windDrivenRainFoam.C \
+
+# sources

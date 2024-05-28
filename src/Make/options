@@ -3,5 +3,6 @@ EXE_INC = \
 	-I$(LIB_SRC)/meshTools/lnInclude
 
 EXE_LIBS = \
+	-L/usr/lib/openfoam/openfoam2312/platforms/linux64MingwDPInt32Opt/lib \
 	-lfiniteVolume \
 	-lmeshTools

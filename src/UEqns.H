@@ -10,7 +10,8 @@ surfaceScalarField phiRa
 
 fvVectorMatrix UrainEqn
 (
-    fvm::div(phirain[phase_no], Urain[phase_no],"div(phirain,Urain)")
+      fvm::ddt(Urain[phase_no])
+    + fvm::div(phirain[phase_no], Urain[phase_no],"div(phirain,Urain)")
 //    - fvm::Sp(fvc::div(phirain[phase_no]),Urain[phase_no]) //removed for bounded div scheme
 
     - fvm::laplacian(nutrain, Urain[phase_no])
@@ -23,9 +24,14 @@ fvVectorMatrix UrainEqn
     g
     + ((3* mua * CdRe)/(4 * rhop * dp * dp))*U
     - fvm::Sp(((3* mua * CdRe)/(4 * rhop * dp * dp)),Urain[phase_no])
+    + fvOptions(Urain[phase_no]) // add fvOptions, might be able to support explicit porosity
 );
 UrainEqn.relax();
 
+fvOptions.constrain(UrainEqn); // add fvOptions
+
 UrainEqn.solve();
+
+fvOptions.correct(Urain[phase_no]); // add fvOptions
 
 phirain[phase_no] = fvc::interpolate(Urain[phase_no]) & mesh.Sf();

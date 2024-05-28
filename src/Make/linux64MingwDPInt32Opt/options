@@ -1,0 +1,12 @@
+# 1 "Make/options"
+# 1 "<built-in>"
+# 1 "<command-line>"
+# 1 "Make/options"
+EXE_INC = -I$(LIB_SRC)/finiteVolume/lnInclude 	-I$(LIB_SRC)/meshTools/lnInclude
+
+
+
+EXE_LIBS = 	-L/usr/lib/openfoam/openfoam2312/platforms/linux64MingwDPInt32Opt/lib 	-lfiniteVolume 	-lmeshTools
+EXE_INC += -DFOAM_DLOPEN_LIBS='"finiteVolume","meshTools"'
+
+# options

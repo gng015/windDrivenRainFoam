@@ -1,3 +1,4 @@
-windDrivenRainFoam.C
+windDrivenRainFoam_LTS.C
 
-EXE = $(FOAM_USER_APPBIN)/windDrivenRainFoam
+EXE = $(FOAM_USER_APPBIN)/windDrivenRainFoam_LTS
+LIB = $(FOAM_USER_LIBBIN)/windDrivenRainFoam_LTS
