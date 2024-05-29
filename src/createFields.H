@@ -49,12 +49,14 @@ List<scalar> phases
     transportProperties.lookup("phases")
 );
 
-// Allow manual fhd input but only for single Rh input
-List<scalar> fhd
-(
-    transportProperties.lookup("fhd")
-);
-
+// Allow manual fhd input but only for single Rh input, ask for customFhd by setting flag
+const bool customFhd = transportProperties.lookupOrDefault("customFhd", false);  
+if (customFhd) {
+	List<scalar> fhd
+	(
+	    transportProperties.lookupOrDefault("fhd",)
+	);
+}
 
 #include "calculateFhD.H"
 
