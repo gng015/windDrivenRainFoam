@@ -54,7 +54,7 @@ const bool customFhd = transportProperties.lookupOrDefault("customFhd", false);
 if (customFhd) {
 	List<scalar> fhd
 	(
-	    transportProperties.lookupOrDefault("fhd",)
+	    transportProperties.lookup("fhd")
 	);
 }
 
