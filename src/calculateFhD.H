@@ -11,7 +11,7 @@ List<scalar> USER_Vt(phases.size());
 List<scalar> USER_DIAMETERS(phases.size());
 
 // if fhd isnt in transport properties then calculate it
-if (fhd.size()==0)
+if (!customFhd)
 {
 
     int Vt_index = 0;
