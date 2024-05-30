@@ -9,4 +9,4 @@ Solver modifications:
 2. fvOption support in alpha and Urain equations
 3. Update calculateFhd to create a DATABASE for discrete DFh and sum DFh in each phase diameter interval
 previously each interval was calculated with interval's DF (best) * diameter's Vt <- Less accurate for large intervals?
-4. Allow custom fhd input in transportProperties in case raindrop size distribution doesnt follow Best (1950) Note: need to include a customFhd boolean flag in transportProperties
+4. Allow custom fhd input in transportProperties in case raindrop size distribution doesnt follow Best (1950) Note: need to include a customFhd boolean flag in transportProperties, false by default
