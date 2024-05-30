@@ -126,13 +126,11 @@ if (!customFhd)
 	    transportProperties.lookup("fhd")
 	);
 
-    DFh[0] == fhd;
-    forAll (fhd,i)
+    DFh[0] = (fhd);
+    for (label m = 0; m < phases.size(); m++)
     {
-        DFh[0][i] = fhd[i];
-    }
 
-    for (label m = 0; m < phases.size(); m++) {
+        //DFh[i][m] = fhd[m];
 
         Info << "D = " << USER_DIAMETERS[m] << " mm | fhd = " << fhd[m] << nl;
 
