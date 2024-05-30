@@ -10,31 +10,42 @@ DATABASE_Vt = {0, 1.17, 1.62, 2.06, 2.47, 2.87, 3.27, 3.67, 4.03, 4.64, 5.17, 5.
 List<scalar> USER_Vt(phases.size());
 List<scalar> USER_DIAMETERS(phases.size());
 
+
+forAll (phases,i)
+{
+    USER_DIAMETERS[i] = phases[i];
+}
+
+List<scalar> Vt(phases.size());
+
+
+List<List<scalar>> DATABASE_DFh(Rh.size());
+List<List<scalar>> USER_DFh(Rh.size());
+List<List<scalar>> DFh(Rh.size());
+
+int Vt_index = 0;
+
+forAll (phases, i)
+{
+    for (label j = 0; j < 34; j++)
+    {
+        if ( std::abs(DATABASE_DIAMETERS[j]-USER_DIAMETERS[i]) < scalar(1E-4) )
+        {
+
+            USER_Vt[Vt_index] = DATABASE_Vt[j];
+            Vt_index = Vt_index + 1;
+
+        }
+    }
+}
+
+Vt = USER_Vt;
+
+
+
 // if fhd isnt in transport properties then calculate it
 if (!customFhd)
 {
-
-    int Vt_index = 0;
-
-    forAll (phases, i)
-    {
-        for (label j = 0; j < 34; j++)
-        {
-            if ( std::abs(DATABASE_DIAMETERS[j]-USER_DIAMETERS[i]) < scalar(1E-4) )
-            {
-                USER_Vt[Vt_index] = DATABASE_Vt[j];
-                Vt_index = Vt_index + 1;
-            }
-        }
-    }
-
-    List<scalar> Vt(phases.size());
-    Vt = USER_Vt;
-
-    List<List<scalar>> DATABASE_DFh(Rh.size());
-    List<List<scalar>> USER_DFh(Rh.size());
-    List<List<scalar>> DFh(Rh.size());
-
     forAll (Rh, i)
     {
         scalar Rh_ = Rh[i];
@@ -98,7 +109,7 @@ if (!customFhd)
                 Info << "D = " << USER_DIAMETERS[m] << " mm | fhd = " << temp_USER_DFh[m] << nl;
 
             }
-            // set the tempo DFh to USER array
+            // set the temp DFh to USER array
             USER_DFh[i] = (temp_USER_DFh);
             // Write USER_DFh to DFh because DFh is used in calculateCatchRatio.H and I don't want to rename it
             DFh[i] = USER_DFh[i];
@@ -108,8 +119,24 @@ if (!customFhd)
 
 } else {
 
-    List<List<scalar>> DFh(Rh.size());
-    DFh[0] = fhd;
+    Info << "Using custom fhd " << nl;
+
+	List<scalar> fhd
+	(
+	    transportProperties.lookup("fhd")
+	);
+
+    DFh[0] == fhd;
+    forAll (fhd,i)
+    {
+        DFh[0][i] = fhd[i];
+    }
+
+    for (label m = 0; m < phases.size(); m++) {
+
+        Info << "D = " << USER_DIAMETERS[m] << " mm | fhd = " << fhd[m] << nl;
+
+    }
 
 }
 ///////////////////////////////////////////

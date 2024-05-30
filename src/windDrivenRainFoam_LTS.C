@@ -37,6 +37,7 @@ Description
 #include "fvOptions.H"
 #include "pimpleControl.H"
 #include "localEulerDdtScheme.H"
+#include "fvcSmooth.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -44,16 +45,17 @@ Description
 
 int main(int argc, char *argv[])
 {
-    #include "setRootCase.H"
+    #include "setRootCaseLists.H"
     #include "createTime.H"
     #include "createMesh.H"
+    #include "createControl.H"
     #include "createFields.H"
+    #include "createTimeControls.H"
     #include "readGravitationalAcceleration.H"
-    #include "CourantNo.H"
-    #include "setInitialDelta.H"
 
+//    pimpleControl pimple(mesh);
 
-    pimpleControl pimple(mesh);
+    #include "createRainFields.H"
 
     if (!LTS)
     {
@@ -62,8 +64,7 @@ int main(int argc, char *argv[])
     }
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-    #include "createRainFields.H"
+    Info << "Reading turbulence fields\n" << endl;
     #include "createTDFields.H"
     
     if (solveTD)    { Info <<nl<< "Solving for the turbulent dispersion of raindrops" << endl; }
@@ -76,7 +77,7 @@ int main(int argc, char *argv[])
     Info << "Air dynamic viscosity: " << mua.value() << " kg/m-s" << endl;
     Info << "Water density: " << rhop.value() << " kg/m3" << endl;
     
-     while (runTime.run())
+    while (runTime.run())
     {
 
         if (LTS)
@@ -96,7 +97,7 @@ int main(int argc, char *argv[])
         {
             Info<< nl << "Time = " << runTime.timeName() << nl;
 
-            for (int nonOrth=0; nonOrth<=simple.nNonOrthCorr(); nonOrth++)
+            for (int nonOrth=0; nonOrth<=pimple.nNonOrthCorr(); nonOrth++)
             {
                 forAll (phases, phase_no)
                 {
@@ -104,6 +105,8 @@ int main(int argc, char *argv[])
                     #include "alphaEqns.H"
 
                     dimensionedScalar dp ("dp", dimensionSet(0,1,0,0,0,0,0), phases[phase_no]);
+
+                    dp = dp * 1E-3; // scale dp by 0.001 because transportProperties is in mm
 
                     volScalarField magUr = mag(U - Urain[phase_no]);
 
@@ -124,20 +127,22 @@ int main(int argc, char *argv[])
                 }
             }
 
-            runTime.write();
-
-            Info<< "ExecutionTime = " << runTime.elapsedCpuTime() << " s"
-                << " ClockTime = " << runTime.elapsedClockTime() << " s"
-                << nl << endl;
         }
 
-        #include "calculateCatchRatio.H"
+        runTime.write();
 
         Info<< "ExecutionTime = " << runTime.elapsedCpuTime() << " s"
-                << "  ClockTime = " << runTime.elapsedClockTime() << " s"
-                << nl << endl;
-
+            << " ClockTime = " << runTime.elapsedClockTime() << " s"
+            << nl << endl;
     }
+
+
+
+    #include "calculateCatchRatio.H"
+
+    Info<< "ExecutionTime = " << runTime.elapsedCpuTime() << " s"
+            << "  ClockTime = " << runTime.elapsedClockTime() << " s"
+            << nl << endl;
 
     Info<< "End\n" << endl;
 

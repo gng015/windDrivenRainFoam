@@ -50,10 +50,15 @@
 
 # 8 "<command-line>" 2
 # 1 "Make/options"
-EXE_INC = -I$(LIB_SRC)/finiteVolume/lnInclude 	-I$(LIB_SRC)/meshTools/lnInclude
+EXE_INC = -I$(LIB_SRC)/finiteVolume/lnInclude 	-I$(LIB_SRC)/meshTools/lnInclude 	-I$(LIB_SRC)/TurbulenceModels/turbulenceModels/lnInclude 	-I$(LIB_SRC)/TurbulenceModels/incompressible/lnInclude 	-I$(LIB_SRC)/transportModels/incompressible/singlePhaseTransportModel 	-I$(LIB_SRC)/transportModels
 
 
 
-EXE_LIBS = 	-L$(FOAM_SITE_LIBBIN) 	-L$(FOAM_SITE_LIBBIN)/finiteVolume 	-L$(FOAM_SITE_LIBBIN)/meshTools
+
+
+
+
+
+EXE_LIBS = 	-L/usr/lib/openfoam/openfoam2312/platforms/linux64GccDPInt32Opt/lib 	-lfiniteVolume 	-lmeshTools 	-lfvOptions 	-lturbulenceModels 	-lincompressibleTurbulenceModels 	-lincompressibleTransportModels
 
 # options

@@ -1,4 +1,4 @@
 SOURCE = \
-windDrivenRainFoam.C \
+windDrivenRainFoam_LTS.C \
 
 # sources

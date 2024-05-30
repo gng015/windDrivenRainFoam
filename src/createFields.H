@@ -1,6 +1,6 @@
 #include "createRDeltaT.H"
 
-Info<< "Reading transportProperties\n" << endl;
+Info<< "\nReading transportProperties\n" << endl;
 
 IOdictionary transportProperties
 (
@@ -51,32 +51,8 @@ List<scalar> phases
 
 // Allow manual fhd input but only for single Rh input, ask for customFhd by setting flag
 const bool customFhd = transportProperties.lookupOrDefault("customFhd", false);  
-if (customFhd) {
-	List<scalar> fhd
-	(
-	    transportProperties.lookup("fhd")
-	);
-}
 
 #include "calculateFhD.H"
-
-
-
-Info << nl << "Reading field U\n" << endl;
-volVectorField U
-(
-    IOobject
-    (
-        "U",
-        "0",//runTime.timeName(), //If read from the latest timedir, it will be scaled each time the simulation is restarted!
-        mesh,
-        IOobject::MUST_READ,
-        IOobject::NO_WRITE
-    ),
-    mesh
-);
-U = U*scalingFactor;
-U.correctBoundaryConditions();
 
 // Was phi field missing? Solver works after adding a reading phi field section
 Info << "Reading field phi\n" << endl;
@@ -84,14 +60,30 @@ surfaceScalarField phi
 (
 	IOobject
 	(
-		"phi", 
-		runTime.timeName(), 
+		"phi",
+		"0", // phi only exists in the 0 timedir,
 		mesh,
         IOobject::MUST_READ,
         IOobject::NO_WRITE
 	),
 	mesh
 );
+
+Info << nl << "Reading field U\n" << endl;
+volVectorField U
+(
+    IOobject
+    (
+        "U",
+        "0", //If read from the latest timedir, it will be scaled each time the simulation is restarted!
+        mesh,
+        IOobject::MUST_READ,
+        IOobject::NO_WRITE
+    ),
+    mesh
+);
+U = U*scalingFactor;
+U.correctBoundaryConditions(); // need to have phi field before you can correct boundary conditions
 
 volScalarField Re
 (
@@ -120,6 +112,7 @@ volScalarField CdRe
     mesh,
     dimensionedScalar("CdRe",dimensionSet(0,0,0,0,0,0,0),250)
 );
+
 
 
 #include "createFvOptions.H"

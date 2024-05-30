@@ -1,2 +1,1 @@
-EXE = $(FOAM_USER_APPBIN)/windDrivenRainFoam
-LIB = $(FOAM_USER_LIBBIN)/windDrivenRainFoam
+EXE = $(FOAM_USER_APPBIN)/windDrivenRainFoam_LTS

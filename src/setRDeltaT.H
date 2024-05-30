@@ -20,9 +20,9 @@
 
     surfaceScalarField maxPhi("maxPhi", phi);
 
-    for (phases, phase_no)
+    forAll (phases, phase_no)
     {
-        maxPhi = max(maxPhi, phirain[phase_no]));
+        maxPhi = max(maxPhi, phirain[phase_no]);
     }
 
     // Set the reciprocal time-step from the local Courant number
@@ -33,7 +33,7 @@
        /((2*maxCo)*mesh.V())
     );
 
-    // Update tho boundary values of the reciprocal time-step
+    // Update the boundary values of the reciprocal time-step
     rDeltaT.correctBoundaryConditions();
 
     fvc::smooth(rDeltaT, rDeltaTSmoothingCoeff);
