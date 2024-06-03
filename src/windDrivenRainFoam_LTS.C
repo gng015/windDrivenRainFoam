@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
     }
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-    Info << "Reading turbulence fields\n" << endl;
+    Info <<nl<< "Reading turbulence fields\n" << endl;
     #include "createTDFields.H"
     
     if (solveTD)    { Info <<nl<< "Solving for the turbulent dispersion of raindrops" << endl; }

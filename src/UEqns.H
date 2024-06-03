@@ -26,6 +26,7 @@ fvVectorMatrix UrainEqn
     - fvm::Sp(((3* mua * CdRe)/(4 * rhop * dp * dp)),Urain[phase_no])
     + fvOptions(Urain[phase_no]) // add fvOptions, might be able to support explicit porosity
 );
+
 UrainEqn.relax();
 
 fvOptions.constrain(UrainEqn); // add fvOptions

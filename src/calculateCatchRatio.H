@@ -1,13 +1,21 @@
+List<scalar> inletAlpha
+(
+    transportProperties.lookup("inletAlpha")
+);
+
+
 Info<< nl << "Calculating specific catch ratio fields\n" << endl;
 forAll (phases, phase_no)
 {
+    dimensionedScalar Vt_i("Vt_i", dimLength/dimTime, Vt[phase_no]);
+
     surfaceScalarField normalvel
     (
-        mag( (mesh.Sf()/mesh.magSf()) & fvc::interpolate(Urain[phase_no]) )
+         (mesh.Sf()/mesh.magSf()) & fvc::interpolate(Urain[phase_no]) // remove mag since normals will point out of surface
     );
     surfaceScalarField surfaceScr
     (
-        (normalvel * fvc::interpolate(alpharain[phase_no])) / (1.0 * Vt[phase_no]) //Here 1.0 is the alpha values at inlets 
+        (normalvel * fvc::interpolate(alpharain[phase_no])) / (inletAlpha[phase_no] * Vt_i) //Here 1.0 is the alpha values at inlets // set inletAlpha in transportProperties and read from there
     );
     const surfaceScalarField::Boundary& patchSurfaceScr = surfaceScr.boundaryField();
 
@@ -25,8 +33,9 @@ forAll (phases, phase_no)
             IOobject::NO_READ,
             IOobject::NO_WRITE
         ),
-        mesh,
-        dimensionedScalar(namescr_i, dimless, 0.0)
+         (Urain[phase_no] & g.value()/mag(g.value()) * alpharain[phase_no]) / (inletAlpha[phase_no] * Vt_i) // write volScalarField as (Uz*alpha)/(inletAlpha*inletVt)
+        //mesh, // write blank mesh
+        // dimensionedScalar(namescr_i, dimless, 0.0)
     )
     );        
     volScalarField::Boundary& scrtempBf = scr[phase_no].boundaryFieldRef();
@@ -42,7 +51,10 @@ forAll (phases, phase_no)
 Info << "Calculating catch ratio field\n" << endl;
 forAll (Rh, i)
 {
-    word gcrname ("gcr" + name(Rh[i]));
+    word gcrname ("gcr");
+    if (Rh.size()!=1) {
+        gcrname = "gcr" + name(Rh[i]);
+    }
     volScalarField gcrtemp
     (
         IOobject

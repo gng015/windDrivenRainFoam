@@ -23,7 +23,7 @@ forAll(phases, phase_no)
         mesh
     )
     );
-	Info << nameU_i << " field created" << endl;
+	Info << nl << nameU_i << " field created" << endl;
 
     word namephi_i ("phi" + name(phase_no+1));
     phirain.set
