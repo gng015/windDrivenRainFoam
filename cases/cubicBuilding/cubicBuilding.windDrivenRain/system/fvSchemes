@@ -1,46 +1,59 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.0.0                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
 FoamFile
 {
-  version 2.0;
-  format ascii;
-  class dictionary;
-  location "system";
-  object fvSchemes;
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      fvSchemes;
 }
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 ddtSchemes
 {
-  default steadyState;
+//    default         steadyState;
+      default         localEuler;
 }
 
 gradSchemes
 {
-  default Gauss linear;
+    default         Gauss linear;
 }
 
 divSchemes
 {
-  default Gauss linear;
-
-  div(phi,alpha) bounded Gauss upwind;          
-  div(phi,U) bounded Gauss upwind;
-  div((-nutrain*T(grad(U)))) Gauss linear;
+    default         Gauss linear;
+    "div\(phi.*,alpha.*\)"    Gauss upwind;
+    "div\(phi.*,U.*\)"      Gauss upwind;
+    "div\(\(-nutrain*T\(grad\(U.*\)\)\)\)" Gauss linear;
 }
 
 laplacianSchemes
 {
-  default         none;
-
-  laplacian(nutrain,U) Gauss linear corrected;
+    default         none;
+    "laplacian\(nutrain,U.*\)" Gauss linear corrected;
 }
 
 interpolationSchemes
 {
-  default linear;
+    default         linear;
 }
 
 snGradSchemes
 {
-  default corrected;
+    default         orthogonal;
 }
 
-// vi: set ft=foam et sw=2 ts=2 sts=2:
+fluxRequired
+{
+    default         no;
+}
+
+
+// ************************************************************************* //

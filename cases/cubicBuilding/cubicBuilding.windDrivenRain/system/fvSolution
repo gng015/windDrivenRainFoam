@@ -11,10 +11,11 @@ solvers
 {
   "U.*"
   {
-    solver PBiCG;
+    solver PBiCGStab;
     preconditioner DILU;
     tolerance 1e-8;
     relTol 0.1;
+    minIter   1;
   }
 
   "alpha.*"
@@ -23,24 +24,32 @@ solvers
     preconditioner DILU;
     tolerance 1e-9;
     relTol 0.1;
+    minIter   1;
   }
 }
 
-SIMPLE
+PIMPLE
 {
   nNonOrthogonalCorrectors 0;
-
-  residualControl
-  {
-    "alpha.*" 1e-6;
-    "U.*" 1e-6;
-  }
+  rDeltaTSmoothingCoeff    0.1;
+  rDeltaTDampingCoeff      0.5;
+  maxCo                   0.9;
+  maxDeltaT               1;
 }
 
 relaxationFactors
 {
-  "alpha.*" 0.7;
-  "U.*" 0.9;
-}
+/*
+  fields
+  {
+    "alpha.*" 0.9;
+    "U.*" 0.9;
+  }
 
-// vi: set ft=foam et sw=2 ts=2 sts=2:
+  equations
+  {
+    "alpha.*" 0.7;
+    "U.*" 0.9;
+  }
+*/
+}
