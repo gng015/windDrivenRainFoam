@@ -33,6 +33,8 @@ fvOptions.constrain(UrainEqn); // add fvOptions
 
 UrainEqn.solve();
 
+Urain[phase_no].correctBoundaryConditions();
+
 fvOptions.correct(Urain[phase_no]); // add fvOptions
 
 phirain[phase_no] = fvc::interpolate(Urain[phase_no]) & mesh.Sf();
