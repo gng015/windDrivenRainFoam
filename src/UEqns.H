@@ -1,4 +1,4 @@
-volTensorField Rca(-nutrain*dev(T(fvc::grad(Urain[phase_no])))); // original: Rca(-nutrain*(T(fvc::grad(Urain[phase_no])))); 80% sure that there's a missing "dev", as most solvers include a dev(T(grad(U)) term
+volTensorField Rca(-nutrain*(T(fvc::grad(Urain[phase_no])))); 
 Rca = Rca + (2.0/3.0)*sqr(Ctrain[phase_no])*I*k - (2.0/3.0)*I*tr(Rca);
 Rca.correctBoundaryConditions();
 
