@@ -20,4 +20,6 @@ fvOptions.constrain(alphaEqn); // add fvOptions
 
 alphaEqn.solve();
 
+alpharain[phase_no].correctBoundaryConditions();
+
 fvOptions.correct(alpharain[phase_no]); // add fvOptions
