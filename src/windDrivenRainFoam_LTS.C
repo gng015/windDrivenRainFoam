@@ -124,6 +124,20 @@ int main(int argc, char *argv[])
 
                     #include "UEqns.H"
 
+                    // continuity error for phirain[phase_no]
+                    volScalarField contErr(fvc::div(phirain[phase_no]));
+
+                    scalar sumLocalContErr = runTime.deltaTValue()*
+                        mag(contErr)().weightedAverage(mesh.V()).value();
+
+                    scalar globalContErr = runTime.deltaTValue()*
+                        contErr.weightedAverage(mesh.V()).value();
+
+                    word namephi_i ("phi" + name(phase_no+1));
+                    Info<< namephi_i << " field continuity errors : sum local = " << sumLocalContErr
+                        << ", global = " << globalContErr
+                        << endl;
+
                 }
             }
 
