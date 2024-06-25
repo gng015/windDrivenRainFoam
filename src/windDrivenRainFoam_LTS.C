@@ -56,6 +56,7 @@ int main(int argc, char *argv[])
 //    pimpleControl pimple(mesh);
 
     #include "createRainFields.H"
+    int current_phase_no = -1;
 
     if (!LTS)
     {
@@ -80,16 +81,6 @@ int main(int argc, char *argv[])
     while (runTime.run())
     {
 
-        if (LTS)
-        {
-            #include "setRDeltaT.H"
-        }
-        else
-        {
-            #include "CourantNo.H"
-            #include "setDeltaT.H"
-        }
-
         ++runTime;
 
 
@@ -99,8 +90,20 @@ int main(int argc, char *argv[])
 
             for (int nonOrth=0; nonOrth<=pimple.nNonOrthCorr(); nonOrth++)
             {
+                current_phase_no = 0;
                 forAll (phases, phase_no)
                 {
+
+                    if (LTS)
+                    {
+                        #include "setRDeltaT.H"
+                    }
+                    else
+                    {
+                        #include "CourantNo.H"
+                        #include "setDeltaT.H"
+                    }
+
 
                     #include "alphaEqns.H"
 
@@ -138,6 +141,7 @@ int main(int argc, char *argv[])
                         << ", global = " << globalContErr
                         << endl;
 
+                    ++current_phase_no;
                 }
             }
 

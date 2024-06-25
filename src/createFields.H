@@ -54,20 +54,6 @@ const bool customFhd = transportProperties.lookupOrDefault("customFhd", false);
 
 #include "calculateFhD.H"
 
-// Was phi field missing? Solver works after adding a reading phi field section
-Info << "Reading field phi\n" << endl;
-surfaceScalarField phi
-(
-	IOobject
-	(
-		"phi",
-		"0", // phi only exists in the 0 timedir,
-		mesh,
-        IOobject::MUST_READ,
-        IOobject::NO_WRITE
-	),
-	mesh
-);
 
 Info << nl << "Reading field U\n" << endl;
 volVectorField U
@@ -82,8 +68,28 @@ volVectorField U
     ),
     mesh
 );
-U = U*scalingFactor;
-U.correctBoundaryConditions(); // need to have phi field before you can correct boundary conditions
+
+if (scalingFactor != 1)
+{
+    U = U*scalingFactor;
+    U.correctBoundaryConditions();
+}
+
+// Was phi field missing compared to the previous versions?
+Info<< "Reading/calculating face flux field phi\n" << endl;
+surfaceScalarField phi
+(
+	IOobject
+	(
+		"phi",
+		runTime.timeName(), // phi only exists in the 0 timedir,
+		mesh,
+        IOobject::READ_IF_PRESENT,
+        IOobject::NO_WRITE
+	),
+	linearInterpolate(U) & mesh.Sf()
+);
+
 
 volScalarField Re
 (

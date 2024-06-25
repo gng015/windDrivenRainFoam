@@ -1,11 +1,11 @@
 volTensorField Rca(-nutrain*(T(fvc::grad(Urain[phase_no]))));
-Rca = Rca + (2.0/3.0)*sqr(Ctrain[phase_no])*I*k - (2.0/3.0)*I*tr(Rca);
+Rca = Rca + (2.0/3.0)*sqr(Ctrain[phase_no])*I*k - (2.0/3.0)*I*tr(Rca); // Rca - 2/3*I*tr(Rca) is dev2(T(fvc::grad(Urain[phase_no])))
 Rca.correctBoundaryConditions();
 
 surfaceScalarField phiRa
 (
     - fvc::interpolate(nutrain)
-    *mesh.magSf()*fvc::snGrad(alpharain[phase_no])/fvc::interpolate(alpharain[phase_no] + scalar(0.001))
+    *mesh.magSf()*fvc::snGrad(alpharain[phase_no])/fvc::interpolate(alpharain[phase_no] + scalar(0.001)) // impose that the divergence of the mixture flux is zero -> refer to bubblefoam
 );
 
 fvVectorMatrix UrainEqn

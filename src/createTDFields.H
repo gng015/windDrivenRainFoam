@@ -35,8 +35,12 @@ volScalarField k
     mesh,
     dimensionedScalar("k",dimensionSet(0,2,-2,0,0,0,0),0)
 );
-k = k*pow(scalingFactor,2);
-k.correctBoundaryConditions();
+
+if (scalingFactor != 1)
+{
+    k = k*pow(scalingFactor,2);
+    k.correctBoundaryConditions();
+}
 
 volScalarField epsilon
 (
@@ -51,8 +55,12 @@ volScalarField epsilon
     mesh,
     dimensionedScalar("epsilon",dimensionSet(0,2,-3,0,0,0,0),0)
 );
-epsilon = epsilon*pow(scalingFactor,3);
-epsilon.correctBoundaryConditions();
+
+if (scalingFactor != 1)
+{
+    epsilon = epsilon*pow(scalingFactor,3);
+    epsilon.correctBoundaryConditions();
+}
 
 volScalarField nut
 (
@@ -67,8 +75,12 @@ volScalarField nut
     mesh,
     dimensionedScalar("nut",dimensionSet(0,2,-1,0,0,0,0),0)
 );
-nut = nut*scalingFactor;
-nut.correctBoundaryConditions();
+
+if (scalingFactor != 1)
+{
+    nut = nut*scalingFactor;
+    nut.correctBoundaryConditions();
+}
 
 volScalarField nutrain
 (

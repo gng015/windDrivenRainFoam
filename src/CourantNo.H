@@ -36,24 +36,40 @@ scalar meanCoNum = 0.0;
 
 if (mesh.nInternalFaces())
 {
-    scalarField sumPhi
-    (
-        fvc::surfaceSum(mag(phi))().primitiveField()
-    );
+    if (current_phase_no==-1) {
 
-    forAll(phases, phasei)
-    {
-        sumPhi = max
+        scalarField sumPhi
         (
-            sumPhi,
-            fvc::surfaceSum(mag(phirain[phasei]))().primitiveField()
+            fvc::surfaceSum(mag(phi))().primitiveField()
         );
+
+        forAll(phases, phasei)
+        {
+            sumPhi = max
+            (
+                sumPhi,
+                fvc::surfaceSum(mag(phirain[phasei]))().primitiveField()
+            );
+        }
+
+        CoNum = 0.5*gMax(sumPhi/mesh.V().field())*runTime.deltaTValue();
+
+        meanCoNum =
+            0.5*(gSum(sumPhi)/gSum(mesh.V().field()))*runTime.deltaTValue();
+
+    } else {
+
+        scalarField sumPhi
+        (
+            fvc::surfaceSum(mag(phirain[current_phase_no]))().primitiveField()
+        );
+
+        CoNum = 0.5*gMax(sumPhi/mesh.V().field())*runTime.deltaTValue();
+
+        meanCoNum =
+            0.5*(gSum(sumPhi)/gSum(mesh.V().field()))*runTime.deltaTValue();
+
     }
-
-    CoNum = 0.5*gMax(sumPhi/mesh.V().field())*runTime.deltaTValue();
-
-    meanCoNum =
-        0.5*(gSum(sumPhi)/gSum(mesh.V().field()))*runTime.deltaTValue();
 }
 
 Info<< "Courant Number mean: " << meanCoNum
